@@ -79,7 +79,7 @@ export class AppComponent implements AfterViewChecked {
         format: 'string',
         widget: 'string',
         placeholder: 'Enter a name for this task',
-        maxLength: 127, //- this.workflow.name.length
+        maxLength: 127,
       },
       // job inputs fields
       inputs: {
