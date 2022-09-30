@@ -1,6 +1,9 @@
-# WIPP Project
+# WIPP Plugin Manifest generator
  
-![Build and Deploy](https://github.com/wassimboukries/WIPP-Plugin-Manifest-generation/workflows/Build%20and%20Deploy/badge.svg)
+![Build and Deploy](https://github.com/usnistgov/WIPP-Plugin-Manifest-generator/workflows/Build%20and%20Deploy/badge.svg)
+
+Code for the online WIPP plugin manifest generator.
+
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.2. 
 
