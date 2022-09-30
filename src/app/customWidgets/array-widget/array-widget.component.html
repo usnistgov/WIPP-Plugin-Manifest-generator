@@ -1,5 +1,5 @@
 <div class="widget form-group">
-    <h4 [attr.for]="id" class="horizontal control-label">
+    <label [attr.for]="id" class="horizontal control-label">
         {{ schema.title }}
         <ng-template #tipContent>
             <div *ngIf="schema.description">
@@ -13,7 +13,7 @@
             class="btn btn-outline-info mr-2" placement="right" [ngbTooltip]="tipContent">
             ?
         </button>
-    </h4>
+    </label>
 
     <div *ngFor="let itemProperty of formProperty.properties; let i = index">
         <sf-form-element [formProperty]="itemProperty"></sf-form-element>

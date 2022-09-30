@@ -34,3 +34,8 @@
   padding-right: 5px;
   padding-left: 0;
 }
+
+/* See https://github.com/ng-bootstrap/ng-bootstrap/issues/2686#issuecomment-1079995784 */
+::ng-deep ngb-modal-backdrop {
+  z-index: 1050 !important;
+}

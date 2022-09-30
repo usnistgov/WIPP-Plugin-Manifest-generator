@@ -16,6 +16,7 @@ import { IntegerWidgetComponent } from './customWidgets/integer-widget/integer-w
 import { ReactiveFormsModule } from '@angular/forms';
 import { SelectWidgetComponent } from './customWidgets/select-widget/select-widget.component';
 import { SearchWidgetComponent } from './customWidgets/search-widget/search-widget.component';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { SearchWidgetComponent } from './customWidgets/search-widget/search-widg
     AppRoutingModule,
     NgbModule,
     FormsModule,
+    HttpClientModule
   ],
   providers: [{ provide: WidgetRegistry, useClass: WidgetsRegistry }],
   bootstrap: [AppComponent],

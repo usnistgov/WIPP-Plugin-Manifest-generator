@@ -13,12 +13,20 @@ export class WidgetsRegistry extends DefaultWidgetRegistry {
   constructor() {
     super();
 
-    this.register('customString', StringWidgetComponent);
-    this.register('customArray', ArrayWidgetComponent);
-    this.register('customObject', ObjectWidgetComponent);
-    this.register('customBoolean', BooleanWidgetComponent);
-    this.register('customInteger', IntegerWidgetComponent);
-    this.register('customSelect', SelectWidgetComponent);
-    this.register('customSearch', SearchWidgetComponent);
+    this.register('string', StringWidgetComponent);
+    this.register('array', ArrayWidgetComponent);
+    this.register('object', ObjectWidgetComponent);
+    this.register('boolean', BooleanWidgetComponent);
+    this.register('integer', IntegerWidgetComponent);
+    this.register('select', SelectWidgetComponent);
+    this.register('search', SearchWidgetComponent);
+
+    // this.register('customString', StringWidgetComponent);
+    // this.register('customArray', ArrayWidgetComponent);
+    // this.register('customObject', ObjectWidgetComponent);
+    // this.register('customBoolean', BooleanWidgetComponent);
+    // this.register('customInteger', IntegerWidgetComponent);
+    // this.register('customSelect', SelectWidgetComponent);
+    // this.register('customSearch', SearchWidgetComponent);
   }
 }

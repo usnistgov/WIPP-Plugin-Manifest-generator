@@ -1,8 +1,9 @@
 import { AfterViewChecked, ChangeDetectorRef, Component } from '@angular/core';
 import { FormProperty, PropertyGroup } from 'ngx-schema-form';
-import  WippSchema  from './WippSchema.json';
+// import  WippSchema  from ;//'./WippSchema.json';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -11,32 +12,111 @@ import { DomSanitizer } from '@angular/platform-browser';
   providers: [NgbModalConfig, NgbModal],
 })
 export class AppComponent implements AfterViewChecked {
+  schemaUrl = 'https://raw.githubusercontent.com/usnistgov/WIPP-Plugins-base-templates/master/plugin-manifest/schema/wipp-plugin-manifest-schema.json';
   manifest: any;
-  Schema = WippSchema;
-  fileUrl: any;
+  schema: any;
   renderedManifest: any;
 
   constructor(
     config: NgbModalConfig,
     private modalService: NgbModal,
     private sanitizer: DomSanitizer,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private httpClient: HttpClient
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
+    this.httpClient.get(this.schemaUrl)
+      .subscribe(res => {
+        console.log(res);
+        const rawSchema: any = res;
+        rawSchema.properties.resourceRequirements.properties.cudaRequirements.properties.cudaComputeCapability.type = 'string';
+        rawSchema.properties.resourceRequirements.properties.cudaRequirements.visibleIf = {
+            gpu: true
+        };
+        rawSchema.properties.inputs.items.properties.options = rawSchema.properties.inputs.items.allOf[0].then.properties.options;
+        rawSchema.properties.inputs.items.properties.options.visibleIf = {
+          oneOf: [
+            { type: 'array' },
+            { type: 'enum' }
+          ]
+        };
+        rawSchema.properties.inputs.items.properties.options.properties.items = rawSchema.properties.inputs.items.allOf[1].then.properties.options.properties.items;
+        rawSchema.properties.inputs.items.properties.options.properties.items.visibleIf = {};
+        rawSchema.properties.inputs.items.properties.options.properties.items.properties.uniqueItems.type = 'boolean';
+        rawSchema.properties.inputs.items.properties.type.widget = 'select';
+        rawSchema.properties.outputs.items.properties.type.widget = 'select';
+        for (let [key, value] of Object.entries(rawSchema.properties.ui.items.allOf[0].then.properties)) {
+          let property: any = value;
+          property.visibleIf = {
+            oneOf: [
+              {
+                key: [
+                  "$EXP$ target.value != 'fieldsets'"
+                ]
+              }
+            ]
+          };
+          rawSchema.properties.ui.items.properties[key] = property;
+        }
+        rawSchema.properties.ui.items.properties.default.type = 'string';
+
+        rawSchema.fieldsets = [
+          {
+            title: 'General information',
+            fields: [
+              'name',
+              'version',
+              'title',
+              'description',
+              'author',
+              'institution',
+              'repository',
+              'website',
+              'citation',
+              'containerId',
+              'baseCommand'
+            ]
+          },
+          {
+            title: 'Plugin inputs',
+            fields: [
+              'inputs',
+              'ui'
+            ]
+          },
+          {
+            title: 'Plugin outputs',
+            fields: [
+              'outputs'
+            ]
+          },
+          {
+            title: 'Plugin resource requirements',
+            fields: [
+              'resourceRequirements'
+            ]
+          },
+        ];
+
+        this.schema = rawSchema;
+        console.log(this.schema);
+      });
   }
+
   ngAfterViewChecked() {
     this.cd.detectChanges();
   }
 
   verifyFormValidation() {
-    return document.querySelector('form').checkValidity();
+    return document.querySelector('form')?.checkValidity();
   }
 
   myFieldBindings = {
     '/inputs': [
       {
         input: (event, formProperty: FormProperty) => {
+          console.log("binding");
           const parent: PropertyGroup = formProperty.findRoot();
           let i: number = 0;
           for (const objectProperty of parent.getProperty('inputs')
@@ -76,6 +156,7 @@ export class AppComponent implements AfterViewChecked {
       taskName: {
         type: 'string',
         description: 'Task name',
+        title: 'Task name',
         format: 'string',
         widget: 'string',
         placeholder: 'Enter a name for this task',
@@ -92,7 +173,6 @@ export class AppComponent implements AfterViewChecked {
     try {
       // default field bindings - none
       this.renderedManifest.fieldBindings = {};
-      // TODO: validation of manifest ui description
       this.renderedManifest.inputs.forEach((input) => {
         const inputSchema = {};
         // common properties
@@ -110,7 +190,7 @@ export class AppComponent implements AfterViewChecked {
               'collection-B',
               'collection-C',
             ];
-            inputSchema['widget'] = 'customSearch';
+            inputSchema['widget'] = 'search';
             inputSchema['type'] = 'string';
             break;
 
@@ -120,7 +200,7 @@ export class AppComponent implements AfterViewChecked {
               'stitchingVector-B',
               'stitchingVector-C',
             ];
-            inputSchema['widget'] = 'customSearch';
+            inputSchema['widget'] = 'search';
             inputSchema['type'] = 'string';
             break;
           case 'pyramidAnnotation':
@@ -129,12 +209,12 @@ export class AppComponent implements AfterViewChecked {
               'pyramidAnnotation-B',
               'pyramidAnnotation-C',
             ];
-            inputSchema['widget'] = 'customSearch';
+            inputSchema['widget'] = 'search';
             inputSchema['type'] = 'string';
             break;
           case 'pyramid':
             inputSchema['enum'] = ['pyramid-A', 'pyramid-B', 'pyramid-C'];
-            inputSchema['widget'] = 'customSearch';
+            inputSchema['widget'] = 'search';
             inputSchema['type'] = 'string';
             break;
           case 'tensorflowModel':
@@ -143,7 +223,7 @@ export class AppComponent implements AfterViewChecked {
               'tensorflowModel-B',
               'tensorflowModel-C',
             ];
-            inputSchema['widget'] = 'customSearch';
+            inputSchema['widget'] = 'search';
             inputSchema['type'] = 'string';
             break;
           case 'csvCollection':
@@ -152,32 +232,31 @@ export class AppComponent implements AfterViewChecked {
               'csvCollection-B',
               'csvCollection-C',
             ];
-            inputSchema['widget'] = 'customSearch';
+            inputSchema['widget'] = 'search';
             inputSchema['type'] = 'string';
             break;
           case 'notebook':
             inputSchema['enum'] = ['notebook-A', 'notebook-B', 'notebook-C'];
-            inputSchema['widget'] = 'customSearch';
+            inputSchema['widget'] = 'search';
             inputSchema['type'] = 'string';
             inputSchema['format'] = input.type;
-            //inputSchema['getOutputs'] = () => this.jobOutputs[input.type];
             break;
           case 'enum':
             inputSchema['type'] = 'string';
             inputSchema['widget'] = 'select';
             inputSchema['oneOf'] = [];
-            input.enumOptions.values.forEach((value) => {
+            input.options.values.forEach((value) => {
               inputSchema['oneOf'].push({
                 enum: [value],
                 description: value,
               });
             });
-            inputSchema['default'] = input.enumOptions.values[0];
+            inputSchema['default'] = input.options.values[0];
             break;
           case 'array':
             inputSchema['type'] = 'array';
             inputSchema['format'] = 'array';
-            inputSchema['items'] = input.arrayOptions;
+            inputSchema['items'] = input.options.items;
             break;
           // Workaround for https://github.com/guillotinaweb/ngx-schema-form/issues/332
           case 'number':
