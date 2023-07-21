@@ -83,7 +83,7 @@ class AppComponent {
         this.sanitizer = sanitizer;
         this.cd = cd;
         this.httpClient = httpClient;
-        this.schemaUrl = 'https://raw.githubusercontent.com/usnistgov/WIPP-Plugins-base-templates/master/plugin-manifest/schema/wipp-plugin-manifest-schema.json';
+        this.schemaUrl = 'https://raw.githubusercontent.com/usnistgov/fair-chain-compute-container/2db11bceaf42834d70b15e742f60433c2486e81a/plugin-manifest/schema/wipp-plugin-manifest-schema.json';
         this.myFieldBindings = {
             '/inputs': [
                 {
