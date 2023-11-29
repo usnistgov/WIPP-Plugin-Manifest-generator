@@ -12,7 +12,7 @@ import {HttpClient} from '@angular/common/http';
   providers: [NgbModalConfig, NgbModal],
 })
 export class AppComponent implements AfterViewChecked {
-  schemaUrl = 'https://raw.githubusercontent.com/usnistgov/WIPP-Plugins-base-templates/master/plugin-manifest/schema/wipp-plugin-manifest-schema.json';
+  schemaUrl = 'https://raw.githubusercontent.com/usnistgov/fair-chain-compute-container/master/schema/manifest.schema.json';
   manifest: any;
   schema: any;
   renderedManifest: any;
